@@ -1,6 +1,7 @@
 defmodule SimonWeb.Router do
   use SimonWeb, :router
 
+  import PhoenixStorybook.Router
   import SimonWeb.MemberAuth
 
   pipeline :browser do
@@ -17,10 +18,14 @@ defmodule SimonWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/" do
+    storybook_assets()
+  end
+
   scope "/", SimonWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live_storybook("/storybook", backend_module: SimonWeb.Storybook)
   end
 
   # Other scopes may use custom stacks.
@@ -53,7 +58,7 @@ defmodule SimonWeb.Router do
     live_session :redirect_if_member_is_authenticated,
       on_mount: [{SimonWeb.MemberAuth, :redirect_if_member_is_authenticated}] do
       live "/members/register", MemberRegistrationLive, :new
-      live "/members/log_in", MemberLoginLive, :new
+      live "/", MemberLoginLive, :new
       live "/members/reset_password", MemberForgotPasswordLive, :new
       live "/members/reset_password/:token", MemberResetPasswordLive, :edit
     end
@@ -80,6 +85,20 @@ defmodule SimonWeb.Router do
       on_mount: [{SimonWeb.MemberAuth, :mount_current_member}] do
       live "/members/confirm/:token", MemberConfirmationLive, :edit
       live "/members/confirm", MemberConfirmationInstructionsLive, :new
+
+      live "/products", ProductLive.Index, :index
+      live "/products/new", ProductLive.Index, :new
+      live "/products/:id/edit", ProductLive.Index, :edit
+
+      live "/products/:id", ProductLive.Show, :show
+      live "/products/:id/show/edit", ProductLive.Show, :edit
+
+      live "/categories", CategoriesLive.Index, :index
+      live "/categories/new", CategoriesLive.Index, :new
+      live "/categories/:id/edit", CategoriesLive.Index, :edit
+
+      live "/categories/:id", CategoriesLive.Show, :show
+      live "/categories/:id/show/edit", CategoriesLive.Show, :edit
     end
   end
 end

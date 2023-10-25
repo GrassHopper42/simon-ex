@@ -2,84 +2,110 @@ defmodule SimonWeb.LayoutComponents do
   @moduledoc """
   LayoutComponents
   """
-  use Phoenix.Component
+  use SimonWeb, :html
 
-  slot :nav, required: true do
-    attr :label, :string
+  slot :inner_block, required: true
+
+  def app_shell(assigns) do
+    ~H"""
+    <.navbar class="fixed top-0 left-0 right-0 z-50"></.navbar>
+    <main class="h-auto p-4 pt-20">
+      <%= render_slot(@inner_block) %>
+    </main>
+    """
   end
 
-  def navbar(assigns) do
+  slot :inner_block
+
+  attr :class, :string, default: nil
+
+  defp navbar(assigns) do
     ~H"""
-    <nav class="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
-      <div class="flex flex-wrap justify-between items-center">
-        <div class="flex justify-start items-center">
-          <button
-            data-drawer-target="drawer-navigation"
-            data-drawer-toggle="drawer-navigation"
-            aria-controls="drawer-navigation"
-            class="p-2 mr-2 text-gray-600 rounded-lg cursor-pointer md:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          >
-            <svg
-              aria-hidden="true"
-              class="w-6 h-6"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                clip-rule="evenodd"
-              >
-              </path>
-            </svg>
-            <svg
-              aria-hidden="true"
-              class="hidden w-6 h-6"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-              >
-              </path>
-            </svg>
-            <span class="sr-only">Toggle sidebar</span>
-          </button>
+    <nav class="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700">
+      <div class="flex flex-wrap items-center justify-between p-4 max-w-auto">
+        <div class="flex items-center justify-start">
+          <.logo />
+        </div>
+        <ul class="flex flex-col p-4 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <.navbar_item link={~p"/products"}>상품 관리</.navbar_item>
+          <.navbar_item link={~p"/"}>창고 관리</.navbar_item>
+          <.navbar_item link={~p"/"}>판매 관리</.navbar_item>
+        </ul>
+        <div class="flex items-center lg:order-2">
+          <.notifications />
         </div>
       </div>
     </nav>
     """
   end
 
-  slot :menu, required: true do
-    attr :name, :string, required: true
+  slot :inner_block, required: true
+  attr :link, :string, required: true
+
+  defp navbar_item(assigns) do
+    ~H"""
+    <li>
+      <.link
+        patch={@link}
+        class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+        aria-current="page"
+      >
+        <%= render_slot(@inner_block) %>
+      </.link>
+    </li>
+    """
+  end
+
+  slot :menu, required: false do
     attr :href, :string, required: true
   end
 
-  def sidebar(assigns) do
+  attr :class, :string, default: nil
+
+  defp logo(assigns) do
     ~H"""
-    <aside
-      class="fixed top-0 left-0 z-40 w-64 h-screen pt-14 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
-      aria-label="Sidenav"
-      id="drawer-navigation"
+    <.link navigate={~p"/"} class="flex items-center justify-between mr-4">
+      <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+        Simon
+      </span>
+    </.link>
+    """
+  end
+
+  defp notifications(assigns) do
+    ~H"""
+    <button
+      type="button"
+      data-dropdown-toggle="notification-dropdown"
+      class="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
     >
-      <div class="overflow-y-auto py-5 px-3 h-full bg-white dark:bg-gray-800">
-        <ul class="space-y-2">
-          <li :for={menu <- @menu}>
-            <a
-              href={menu.href}
-              class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-            >
-              <span class="ml-3">{menu.name}</span>
-            </a>
-          </li>
-        </ul>
+      <span class="sr-only">View notifications</span>
+      <!-- Bell icon -->
+      <svg
+        aria-hidden="true"
+        class="w-6 h-6"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+        </path>
+      </svg>
+    </button>
+    <.notification_dropdown />
+    """
+  end
+
+  defp notification_dropdown(assigns) do
+    ~H"""
+    <div
+      class="z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white rounded shadow-lg divide-y divide-gray-100 dark:divide-gray-600 dark:bg-gray-700"
+      id="notification-dropdown"
+    >
+      <div class="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-600 dark:text-gray-300">
+        Notifications
       </div>
-    </aside>
+    </div>
     """
   end
 end

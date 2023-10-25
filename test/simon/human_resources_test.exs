@@ -19,7 +19,10 @@ defmodule Simon.HumanResourcesTest do
 
   describe "get_member_by_email_and_password/2" do
     test "does not return the member if the email does not exist" do
-      refute HumanResources.get_member_by_email_and_password("unknown@example.com", "hello world!")
+      refute HumanResources.get_member_by_email_and_password(
+               "unknown@example.com",
+               "hello world!"
+             )
     end
 
     test "does not return the member if the password is not valid" do
@@ -31,7 +34,10 @@ defmodule Simon.HumanResourcesTest do
       %{id: id} = member = member_fixture()
 
       assert %Member{id: ^id} =
-               HumanResources.get_member_by_email_and_password(member.email, valid_member_password())
+               HumanResources.get_member_by_email_and_password(
+                 member.email,
+                 valid_member_password()
+               )
     end
   end
 
@@ -59,7 +65,8 @@ defmodule Simon.HumanResourcesTest do
     end
 
     test "validates email and password when given" do
-      {:error, changeset} = HumanResources.register_member(%{email: "not valid", password: "not valid"})
+      {:error, changeset} =
+        HumanResources.register_member(%{email: "not valid", password: "not valid"})
 
       assert %{
                email: ["must have the @ sign and no spaces"],
@@ -130,7 +137,9 @@ defmodule Simon.HumanResourcesTest do
     end
 
     test "requires email to change", %{member: member} do
-      {:error, changeset} = HumanResources.apply_member_email(member, valid_member_password(), %{})
+      {:error, changeset} =
+        HumanResources.apply_member_email(member, valid_member_password(), %{})
+
       assert %{email: ["did not change"]} = errors_on(changeset)
     end
 
@@ -168,7 +177,10 @@ defmodule Simon.HumanResourcesTest do
 
     test "applies the email without persisting it", %{member: member} do
       email = unique_member_email()
-      {:ok, member} = HumanResources.apply_member_email(member, valid_member_password(), %{email: email})
+
+      {:ok, member} =
+        HumanResources.apply_member_email(member, valid_member_password(), %{email: email})
+
       assert member.email == email
       assert HumanResources.get_member!(member.id).email != email
     end
@@ -182,7 +194,11 @@ defmodule Simon.HumanResourcesTest do
     test "sends token through notification", %{member: member} do
       token =
         extract_member_token(fn url ->
-          HumanResources.deliver_member_update_email_instructions(member, "current@example.com", url)
+          HumanResources.deliver_member_update_email_instructions(
+            member,
+            "current@example.com",
+            url
+          )
         end)
 
       {:ok, token} = Base.url_decode64(token, padding: false)
@@ -200,7 +216,11 @@ defmodule Simon.HumanResourcesTest do
 
       token =
         extract_member_token(fn url ->
-          HumanResources.deliver_member_update_email_instructions(%{member | email: email}, member.email, url)
+          HumanResources.deliver_member_update_email_instructions(
+            %{member | email: email},
+            member.email,
+            url
+          )
         end)
 
       %{member: member, token: token, email: email}
@@ -223,7 +243,9 @@ defmodule Simon.HumanResourcesTest do
     end
 
     test "does not update email if member email changed", %{member: member, token: token} do
-      assert HumanResources.update_member_email(%{member | email: "current@example.com"}, token) == :error
+      assert HumanResources.update_member_email(%{member | email: "current@example.com"}, token) ==
+               :error
+
       assert Repo.get!(Member, member.id).email == member.email
       assert Repo.get_by(MemberToken, member_id: member.id)
     end
@@ -276,14 +298,18 @@ defmodule Simon.HumanResourcesTest do
       too_long = String.duplicate("db", 100)
 
       {:error, changeset} =
-        HumanResources.update_member_password(member, valid_member_password(), %{password: too_long})
+        HumanResources.update_member_password(member, valid_member_password(), %{
+          password: too_long
+        })
 
       assert "should be at most 72 character(s)" in errors_on(changeset).password
     end
 
     test "validates current password", %{member: member} do
       {:error, changeset} =
-        HumanResources.update_member_password(member, "invalid", %{password: valid_member_password()})
+        HumanResources.update_member_password(member, "invalid", %{
+          password: valid_member_password()
+        })
 
       assert %{current_password: ["is not valid"]} = errors_on(changeset)
     end
@@ -488,7 +514,9 @@ defmodule Simon.HumanResourcesTest do
     end
 
     test "updates the password", %{member: member} do
-      {:ok, updated_member} = HumanResources.reset_member_password(member, %{password: "new valid password"})
+      {:ok, updated_member} =
+        HumanResources.reset_member_password(member, %{password: "new valid password"})
+
       assert is_nil(updated_member.password)
       assert HumanResources.get_member_by_email_and_password(member.email, "new valid password")
     end

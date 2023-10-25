@@ -165,13 +165,22 @@ defmodule SimonWeb.MemberSettingsLiveTest do
 
       token =
         extract_member_token(fn url ->
-          HumanResources.deliver_member_update_email_instructions(%{member | email: email}, member.email, url)
+          HumanResources.deliver_member_update_email_instructions(
+            %{member | email: email},
+            member.email,
+            url
+          )
         end)
 
       %{conn: log_in_member(conn, member), token: token, email: email, member: member}
     end
 
-    test "updates the member email once", %{conn: conn, member: member, token: token, email: email} do
+    test "updates the member email once", %{
+      conn: conn,
+      member: member,
+      token: token,
+      email: email
+    } do
       {:error, redirect} = live(conn, ~p"/members/settings/confirm_email/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect

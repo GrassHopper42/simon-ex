@@ -1,12 +1,13 @@
 defmodule SimonWeb.CategoryLive.Index do
   use SimonWeb, :live_view
 
-  alias Simon.Catalog
+  alias Simon.Catalog.Category.Finders.{FindCategoryById, ListAllCategories}
+  alias Simon.Catalog.Category.Service.DeleteCategory
   alias Simon.Catalog.Category
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :categories, Catalog.list_categories())}
+    {:ok, stream(socket, :categories, ListAllCategories.run())}
   end
 
   @impl true
@@ -17,7 +18,7 @@ defmodule SimonWeb.CategoryLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Category")
-    |> assign(:category, Catalog.get_category!(id))
+    |> assign(:category, FindCategoryById.run(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -39,8 +40,7 @@ defmodule SimonWeb.CategoryLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    category = Catalog.get_category!(id)
-    {:ok, _} = Catalog.delete_category(category)
+    {:ok, category} = DeleteCategory.run(id)
 
     {:noreply, stream_delete(socket, :categories, category)}
   end

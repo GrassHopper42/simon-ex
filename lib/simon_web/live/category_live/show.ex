@@ -1,7 +1,7 @@
 defmodule SimonWeb.CategoryLive.Show do
   use SimonWeb, :live_view
 
-  alias Simon.Catalog
+  alias Simon.Catalog.Category.Finders.FindCategoryById
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,7 +13,7 @@ defmodule SimonWeb.CategoryLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:category, Catalog.get_category!(id))}
+     |> assign(:category, FindCategoryById.run!(id))}
   end
 
   defp page_title(:show), do: "Show Category"

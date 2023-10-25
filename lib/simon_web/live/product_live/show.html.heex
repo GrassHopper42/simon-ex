@@ -1,24 +1,37 @@
 <.header>
-  Product <%= @product.id %>
-  <:subtitle>This is a product record from your database.</:subtitle>
+  상품 정보
+  <:subtitle>상품 상세 정보</:subtitle>
   <:actions>
     <.link patch={~p"/products/#{@product}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit product</.button>
+      <.button>수정</.button>
+    </.link>
+    <.link
+      phx-click={JS.push("delete", value: %{id: @product.id}) |> hide("##{@product.id}")}
+      data-confirm="정말 삭제하시겠습니까?"
+    >
+      <.button class="bg-red">
+        삭제
+      </.button>
     </.link>
   </:actions>
 </.header>
 
 <.list>
-  <:item title="Code"><%= @product.code %></:item>
-  <:item title="Name"><%= @product.name %></:item>
-  <:item title="Standard"><%= @product.standard %></:item>
-  <:item title="Description"><%= @product.description %></:item>
-  <:item title="Price"><%= @product.price %></:item>
+  <:item title="코드"><%= @product.code %></:item>
+  <:item title="이름"><%= @product.name %></:item>
+  <:item title="가격"><%= @product.price %></:item>
+  <:item title="규격"><%= @product.detail.standard %></:item>
+  <:item title="설명"><%= @product.detail.description %></:item>
 </.list>
 
 <.back navigate={~p"/products"}>Back to products</.back>
 
-<.modal :if={@live_action == :edit} id="product-modal" show on_cancel={JS.patch(~p"/products/#{@product}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="product-modal"
+  show
+  on_cancel={JS.patch(~p"/products/#{@product}")}
+>
   <.live_component
     module={SimonWeb.ProductLive.FormComponent}
     id={@product.id}

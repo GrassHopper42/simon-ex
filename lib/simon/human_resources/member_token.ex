@@ -1,4 +1,5 @@
 defmodule Simon.HumanResources.MemberToken do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Query
   alias Simon.HumanResources.MemberToken
@@ -7,10 +8,10 @@ defmodule Simon.HumanResources.MemberToken do
   @rand_size 32
 
   # It is very important to keep the reset password token expiry short,
-  # since someone with access to the email may take over the account.
+  # since someone with access to the phone may take over the account.
   @reset_password_validity_in_days 1
   @confirm_validity_in_days 7
-  @change_email_validity_in_days 7
+  @change_phone_validity_in_days 7
   @session_validity_in_days 60
 
   schema "members_tokens" do
@@ -65,20 +66,20 @@ defmodule Simon.HumanResources.MemberToken do
   end
 
   @doc """
-  Builds a token and its hash to be delivered to the member's email.
+  Builds a token and its hash to be delivered to the member's phone.
 
-  The non-hashed token is sent to the member email while the
+  The non-hashed token is sent to the member phone while the
   hashed part is stored in the database. The original token cannot be reconstructed,
   which means anyone with read-only access to the database cannot directly use
   the token in the application to gain access. Furthermore, if the user changes
-  their email in the system, the tokens sent to the previous email are no longer
+  their phone in the system, the tokens sent to the previous phone are no longer
   valid.
 
   Users can easily adapt the existing code to provide other types of delivery methods,
   for example, by phone numbers.
   """
-  def build_email_token(member, context) do
-    build_hashed_token(member, context, member.email)
+  def build_phone_number_token(member, context) do
+    build_hashed_token(member, context, member.phone_number)
   end
 
   defp build_hashed_token(member, context, sent_to) do
@@ -100,14 +101,14 @@ defmodule Simon.HumanResources.MemberToken do
   The query returns the member found by the token, if any.
 
   The given token is valid if it matches its hashed counterpart in the
-  database and the user email has not changed. This function also checks
+  database and the user phone number has not changed. This function also checks
   if the token is being used within a certain period, depending on the
   context. The default contexts supported by this function are either
-  "confirm", for account confirmation emails, and "reset_password",
-  for resetting the password. For verifying requests to change the email,
-  see `verify_change_email_token_query/2`.
+  "confirm", for account confirmation phone number, and "reset_password",
+  for resetting the password. For verifying requests to change the phone number,
+  see `verify_change_phone_number_token_query/2`.
   """
-  def verify_email_token_query(token, context) do
+  def verify_phone_number_token_query(token, context) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
         hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
@@ -116,7 +117,7 @@ defmodule Simon.HumanResources.MemberToken do
         query =
           from token in token_and_context_query(hashed_token, context),
             join: member in assoc(token, :member),
-            where: token.inserted_at > ago(^days, "day") and token.sent_to == member.email,
+            where: token.inserted_at > ago(^days, "day") and token.sent_to == member.phone_number,
             select: member
 
         {:ok, query}
@@ -135,22 +136,22 @@ defmodule Simon.HumanResources.MemberToken do
   The query returns the member found by the token, if any.
 
   This is used to validate requests to change the member
-  email. It is different from `verify_email_token_query/2` precisely because
-  `verify_email_token_query/2` validates the email has not changed, which is
+  phone number. It is different from `verify_phone_number_token_query/2` precisely because
+  `verify_phone_number_token_query/2` validates the phone number has not changed, which is
   the starting point by this function.
 
   The given token is valid if it matches its hashed counterpart in the
-  database and if it has not expired (after @change_email_validity_in_days).
+  database and if it has not expired (after @change_phone_validity_in_days).
   The context must always start with "change:".
   """
-  def verify_change_email_token_query(token, "change:" <> _ = context) do
+  def verify_change_phone_number_token_query(token, "change:" <> _ = context) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
         hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
 
         query =
           from token in token_and_context_query(hashed_token, context),
-            where: token.inserted_at > ago(@change_email_validity_in_days, "day")
+            where: token.inserted_at > ago(@change_phone_validity_in_days, "day")
 
         {:ok, query}
 

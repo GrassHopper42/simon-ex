@@ -4,8 +4,20 @@ defmodule SimonWeb.ProductLiveTest do
   import Phoenix.LiveViewTest
   import Simon.CatalogFixtures
 
-  @create_attrs %{code: "some code", name: "some name", description: "some description", standard: "some standard", price: 42}
-  @update_attrs %{code: "some updated code", name: "some updated name", description: "some updated description", standard: "some updated standard", price: 43}
+  @create_attrs %{
+    code: "some code",
+    name: "some name",
+    description: "some description",
+    standard: "some standard",
+    price: 42
+  }
+  @update_attrs %{
+    code: "some updated code",
+    name: "some updated name",
+    description: "some updated description",
+    standard: "some updated standard",
+    price: 43
+  }
   @invalid_attrs %{code: nil, name: nil, description: nil, standard: nil, price: nil}
 
   defp create_product(_) do

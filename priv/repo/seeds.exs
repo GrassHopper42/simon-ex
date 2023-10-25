@@ -9,3 +9,21 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+alias Simon.HumanResources.Member
+alias Simon.HumanResources
+alias Simon.Repo
+
+Repo.delete_all(Member)
+
+if Mix.env() == :dev do
+  IO.puts("Seeding development database")
+
+  password = "1234"
+  password_hash = Bcrypt.hash_pwd_salt(password)
+
+  HumanResources.register_member(%{
+    phone_number: "1234567890",
+    password: "simontest1234"
+  })
+end

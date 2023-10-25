@@ -32,7 +32,9 @@ defmodule SimonWeb.MemberLoginLiveTest do
       {:ok, lv, _html} = live(conn, ~p"/members/log_in")
 
       form =
-        form(lv, "#login_form", member: %{email: member.email, password: password, remember_me: true})
+        form(lv, "#login_form",
+          member: %{email: member.email, password: password, remember_me: true}
+        )
 
       conn = submit_form(form, conn)
 

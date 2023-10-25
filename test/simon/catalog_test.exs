@@ -21,7 +21,13 @@ defmodule Simon.CatalogTest do
     end
 
     test "create_product/1 with valid data creates a product" do
-      valid_attrs = %{code: "some code", name: "some name", description: "some description", standard: "some standard", price: 42}
+      valid_attrs = %{
+        code: "some code",
+        name: "some name",
+        description: "some description",
+        standard: "some standard",
+        price: 42
+      }
 
       assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
       assert product.code == "some code"
@@ -37,7 +43,14 @@ defmodule Simon.CatalogTest do
 
     test "update_product/2 with valid data updates the product" do
       product = product_fixture()
-      update_attrs = %{code: "some updated code", name: "some updated name", description: "some updated description", standard: "some updated standard", price: 43}
+
+      update_attrs = %{
+        code: "some updated code",
+        name: "some updated name",
+        description: "some updated description",
+        standard: "some updated standard",
+        price: 43
+      }
 
       assert {:ok, %Product{} = product} = Catalog.update_product(product, update_attrs)
       assert product.code == "some updated code"

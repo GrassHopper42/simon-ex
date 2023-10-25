@@ -1,12 +1,13 @@
 defmodule SimonWeb.ProductLive.Index do
   use SimonWeb, :live_view
 
-  alias Simon.Catalog
+  alias Simon.Catalog.Product.Finders.{ListAllProducts, FindProductById}
+  alias Simon.Catalog.Product.Service.DeleteProduct
   alias Simon.Catalog.Product
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :products, Catalog.list_products())}
+    {:ok, stream(socket, :products, ListAllProducts.run())}
   end
 
   @impl true
@@ -17,7 +18,7 @@ defmodule SimonWeb.ProductLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Product")
-    |> assign(:product, Catalog.get_product!(id))
+    |> assign(:product, FindProductById.run!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -38,9 +39,13 @@ defmodule SimonWeb.ProductLive.Index do
   end
 
   @impl true
+  def handle_info({SimonWeb.ProductLive.RegistrationForm, {:saved, product}}, socket) do
+    {:noreply, stream_insert(socket, :products, product)}
+  end
+
+  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    product = Catalog.get_product!(id)
-    {:ok, _} = Catalog.delete_product(product)
+    {:ok, product} = DeleteProduct.run(id)
 
     {:noreply, stream_delete(socket, :products, product)}
   end

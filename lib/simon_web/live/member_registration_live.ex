@@ -6,7 +6,7 @@ defmodule SimonWeb.MemberRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="max-w-sm mx-auto">
       <.header class="text-center">
         Register for an account
         <:subtitle>
@@ -31,7 +31,7 @@ defmodule SimonWeb.MemberRegistrationLive do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
-        <.input field={@form[:email]} type="email" label="Email" required />
+        <.input field={@form[:phone_number]} type="tel" label="PhoneNumber" required />
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>

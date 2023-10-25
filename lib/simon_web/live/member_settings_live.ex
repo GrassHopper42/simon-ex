@@ -7,29 +7,29 @@ defmodule SimonWeb.MemberSettingsLive do
     ~H"""
     <.header class="text-center">
       Account Settings
-      <:subtitle>Manage your account email address and password settings</:subtitle>
+      <:subtitle>Manage your account phone_number address and password settings</:subtitle>
     </.header>
 
     <div class="space-y-12 divide-y">
       <div>
         <.simple_form
-          for={@email_form}
-          id="email_form"
-          phx-submit="update_email"
-          phx-change="validate_email"
+          for={@phone_number_form}
+          id="phone_number_form"
+          phx-submit="update_phone_number"
+          phx-change="validate_phone_number"
         >
-          <.input field={@email_form[:email]} type="email" label="Email" required />
+          <.input field={@phone_number_form[:phone_number]} type="tel" label="phone_number" required />
           <.input
-            field={@email_form[:current_password]}
+            field={@phone_number_form[:current_password]}
             name="current_password"
-            id="current_password_for_email"
+            id="current_password_for_phone_number"
             type="password"
             label="Current password"
-            value={@email_form_current_password}
+            value={@phone_number_form_current_password}
             required
           />
           <:actions>
-            <.button phx-disable-with="Changing...">Change Email</.button>
+            <.button phx-disable-with="Changing...">Change phone_number</.button>
           </:actions>
         </.simple_form>
       </div>
@@ -44,10 +44,10 @@ defmodule SimonWeb.MemberSettingsLive do
           phx-trigger-action={@trigger_submit}
         >
           <.input
-            field={@password_form[:email]}
+            field={@password_form[:phone_number]}
             type="hidden"
-            id="hidden_member_email"
-            value={@current_email}
+            id="hidden_member_phone_number"
+            value={@current_phone_number}
           />
           <.input field={@password_form[:password]} type="password" label="New password" required />
           <.input
@@ -75,12 +75,12 @@ defmodule SimonWeb.MemberSettingsLive do
 
   def mount(%{"token" => token}, _session, socket) do
     socket =
-      case HumanResources.update_member_email(socket.assigns.current_member, token) do
+      case HumanResources.update_member_phone_number(socket.assigns.current_member, token) do
         :ok ->
-          put_flash(socket, :info, "Email changed successfully.")
+          put_flash(socket, :info, "phone_number changed successfully.")
 
         :error ->
-          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+          put_flash(socket, :error, "phone_number change link is invalid or it has expired.")
       end
 
     {:ok, push_navigate(socket, to: ~p"/members/settings")}
@@ -88,51 +88,19 @@ defmodule SimonWeb.MemberSettingsLive do
 
   def mount(_params, _session, socket) do
     member = socket.assigns.current_member
-    email_changeset = HumanResources.change_member_email(member)
+    phone_number_changeset = HumanResources.change_member_phone_number(member)
     password_changeset = HumanResources.change_member_password(member)
 
     socket =
       socket
       |> assign(:current_password, nil)
-      |> assign(:email_form_current_password, nil)
-      |> assign(:current_email, member.email)
-      |> assign(:email_form, to_form(email_changeset))
+      |> assign(:phone_number_form_current_password, nil)
+      |> assign(:current_phone_number, member.phone_number)
+      |> assign(:phone_number_form, to_form(phone_number_changeset))
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
 
     {:ok, socket}
-  end
-
-  def handle_event("validate_email", params, socket) do
-    %{"current_password" => password, "member" => member_params} = params
-
-    email_form =
-      socket.assigns.current_member
-      |> HumanResources.change_member_email(member_params)
-      |> Map.put(:action, :validate)
-      |> to_form()
-
-    {:noreply, assign(socket, email_form: email_form, email_form_current_password: password)}
-  end
-
-  def handle_event("update_email", params, socket) do
-    %{"current_password" => password, "member" => member_params} = params
-    member = socket.assigns.current_member
-
-    case HumanResources.apply_member_email(member, password, member_params) do
-      {:ok, applied_member} ->
-        HumanResources.deliver_member_update_email_instructions(
-          applied_member,
-          member.email,
-          &url(~p"/members/settings/confirm_email/#{&1}")
-        )
-
-        info = "A link to confirm your email change has been sent to the new address."
-        {:noreply, socket |> put_flash(:info, info) |> assign(email_form_current_password: nil)}
-
-      {:error, changeset} ->
-        {:noreply, assign(socket, :email_form, to_form(Map.put(changeset, :action, :insert)))}
-    end
   end
 
   def handle_event("validate_password", params, socket) do

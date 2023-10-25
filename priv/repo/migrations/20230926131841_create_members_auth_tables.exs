@@ -13,7 +13,7 @@ defmodule Simon.Repo.Migrations.CreateMembersAuthTables do
       timestamps()
     end
 
-    create unique_index(:members, [:email])
+    create unique_index(:members, [:phone_number])
 
     create table(:members_tokens) do
       add :member_id, references(:members, on_delete: :delete_all), null: false

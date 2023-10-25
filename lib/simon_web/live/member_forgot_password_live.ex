@@ -5,21 +5,21 @@ defmodule SimonWeb.MemberForgotPasswordLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="max-w-sm mx-auto">
       <.header class="text-center">
         Forgot your password?
         <:subtitle>We'll send a password reset link to your inbox</:subtitle>
       </.header>
 
-      <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
-        <.input field={@form[:email]} type="email" placeholder="Email" required />
+      <.simple_form for={@form} id="reset_password_form" phx-submit="send_phone_number">
+        <.input field={@form[:phone_number]} type="tel" placeholder="phone_number" required />
         <:actions>
           <.button phx-disable-with="Sending..." class="w-full">
             Send password reset instructions
           </.button>
         </:actions>
       </.simple_form>
-      <p class="text-center text-sm mt-4">
+      <p class="mt-4 text-sm text-center">
         <.link href={~p"/members/register"}>Register</.link>
         | <.link href={~p"/members/log_in"}>Log in</.link>
       </p>
@@ -31,8 +31,8 @@ defmodule SimonWeb.MemberForgotPasswordLive do
     {:ok, assign(socket, form: to_form(%{}, as: "member"))}
   end
 
-  def handle_event("send_email", %{"member" => %{"email" => email}}, socket) do
-    if member = HumanResources.get_member_by_email(email) do
+  def handle_event("send_phone_number", %{"member" => %{"phone_number" => phone_number}}, socket) do
+    if member = HumanResources.get_member_by_phone_number(phone_number) do
       HumanResources.deliver_member_reset_password_instructions(
         member,
         &url(~p"/members/reset_password/#{&1}")
@@ -40,7 +40,7 @@ defmodule SimonWeb.MemberForgotPasswordLive do
     end
 
     info =
-      "If your email is in our system, you will receive instructions to reset your password shortly."
+      "If your phone_number is in our system, you will receive instructions to reset your password shortly."
 
     {:noreply,
      socket

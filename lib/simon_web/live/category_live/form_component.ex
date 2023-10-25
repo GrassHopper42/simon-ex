@@ -1,7 +1,9 @@
 defmodule SimonWeb.CategoryLive.FormComponent do
   use SimonWeb, :live_component
 
-  alias Simon.Catalog
+  alias Simon.Catalog.Category
+  alias Simon.Catalog.Category.Service.RegisterRootCategory
+  alias Simon.Catalog.Category.Service.UpdateCategoryName
 
   @impl true
   def render(assigns) do
@@ -30,7 +32,7 @@ defmodule SimonWeb.CategoryLive.FormComponent do
 
   @impl true
   def update(%{category: category} = assigns, socket) do
-    changeset = Catalog.change_category(category)
+    changeset = Category.changeset(category)
 
     {:ok,
      socket
@@ -42,7 +44,7 @@ defmodule SimonWeb.CategoryLive.FormComponent do
   def handle_event("validate", %{"category" => category_params}, socket) do
     changeset =
       socket.assigns.category
-      |> Catalog.change_category(category_params)
+      |> Category.changeset(category_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
@@ -53,7 +55,7 @@ defmodule SimonWeb.CategoryLive.FormComponent do
   end
 
   defp save_category(socket, :edit, category_params) do
-    case Catalog.update_category(socket.assigns.category, category_params) do
+    case UpdateCategoryName.call(socket.assigns.category, category_params) do
       {:ok, category} ->
         notify_parent({:saved, category})
 
@@ -68,7 +70,7 @@ defmodule SimonWeb.CategoryLive.FormComponent do
   end
 
   defp save_category(socket, :new, category_params) do
-    case Catalog.create_category(category_params) do
+    case RegisterRootCategory.call(category_params) do
       {:ok, category} ->
         notify_parent({:saved, category})
 

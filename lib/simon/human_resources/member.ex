@@ -1,9 +1,10 @@
 defmodule Simon.HumanResources.Member do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "members" do
-    field :email, :string
+    field :phone_number, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
@@ -36,17 +37,17 @@ defmodule Simon.HumanResources.Member do
   """
   def registration_changeset(member, attrs, opts \\ []) do
     member
-    |> cast(attrs, [:email, :password])
-    |> validate_email(opts)
+    |> cast(attrs, [:phone_number, :password])
+    |> validate_phone_number(opts)
     |> validate_password(opts)
   end
 
-  defp validate_email(changeset, opts) do
+  defp validate_phone_number(changeset, opts) do
     changeset
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
-    |> validate_length(:email, max: 160)
-    |> maybe_validate_unique_email(opts)
+    |> validate_required([:phone_number])
+    |> validate_format(:phone_number, ~r/^\d{10}$/)
+    |> validate_length(:phone_number, is: 10)
+    |> maybe_validate_unique_phone_number(opts)
   end
 
   defp validate_password(changeset, opts) do
@@ -77,28 +78,28 @@ defmodule Simon.HumanResources.Member do
     end
   end
 
-  defp maybe_validate_unique_email(changeset, opts) do
-    if Keyword.get(opts, :validate_email, true) do
+  defp maybe_validate_unique_phone_number(changeset, opts) do
+    if Keyword.get(opts, :validate_phone_number, true) do
       changeset
-      |> unsafe_validate_unique(:email, Simon.Repo)
-      |> unique_constraint(:email)
+      |> unsafe_validate_unique(:phone_number, Simon.Repo)
+      |> unique_constraint(:phone_number)
     else
       changeset
     end
   end
 
   @doc """
-  A member changeset for changing the email.
+  A member changeset for changing the phone_number.
 
   It requires the email to change otherwise an error is added.
   """
-  def email_changeset(member, attrs, opts \\ []) do
+  def phone_number_changeset(member, attrs, opts \\ []) do
     member
-    |> cast(attrs, [:email])
-    |> validate_email(opts)
+    |> cast(attrs, [:phone_number])
+    |> validate_phone_number(opts)
     |> case do
       %{changes: %{email: _}} = changeset -> changeset
-      %{} = changeset -> add_error(changeset, :email, "did not change")
+      %{} = changeset -> add_error(changeset, :phone_number, "did not change")
     end
   end
 

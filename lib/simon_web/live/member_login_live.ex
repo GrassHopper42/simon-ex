@@ -3,31 +3,18 @@ defmodule SimonWeb.MemberLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="max-w-sm mx-auto">
       <.header class="text-center">
         Sign in to account
-        <:subtitle>
-          Don't have an account?
-          <.link navigate={~p"/members/register"} class="font-semibold text-brand hover:underline">
-            Sign up
-          </.link>
-          for an account now.
-        </:subtitle>
       </.header>
 
       <.simple_form for={@form} id="login_form" action={~p"/members/log_in"} phx-update="ignore">
-        <.input field={@form[:email]} type="email" label="Email" required />
-        <.input field={@form[:password]} type="password" label="Password" required />
+        <.input field={@form[:phone_number]} type="tel" label="전화번호" required />
+        <.input field={@form[:password]} type="password" label="비밀번호" required />
 
         <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
-          <.link href={~p"/members/reset_password"} class="text-sm font-semibold">
-            Forgot your password?
-          </.link>
-        </:actions>
-        <:actions>
-          <.button phx-disable-with="Signing in..." class="w-full">
-            Sign in <span aria-hidden="true">→</span>
+          <.button phx-disable-with="로그인 중" class="w-full">
+            로그인 <span aria-hidden="true">→</span>
           </.button>
         </:actions>
       </.simple_form>
@@ -36,8 +23,8 @@ defmodule SimonWeb.MemberLoginLive do
   end
 
   def mount(_params, _session, socket) do
-    email = live_flash(socket.assigns.flash, :email)
-    form = to_form(%{"email" => email}, as: "member")
+    phone_number = live_flash(socket.assigns.flash, :phone_number)
+    form = to_form(%{"phone_number" => phone_number}, as: "member")
     {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
   end
 end

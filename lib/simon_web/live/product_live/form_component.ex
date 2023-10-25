@@ -1,7 +1,9 @@
 defmodule SimonWeb.ProductLive.FormComponent do
   use SimonWeb, :live_component
 
-  alias Simon.Catalog
+  alias Ecto
+  alias Simon.Catalog.Product
+  alias Simon.Catalog.Product.Service.UpdateProductDetail
 
   @impl true
   def render(assigns) do
@@ -12,29 +14,32 @@ defmodule SimonWeb.ProductLive.FormComponent do
         <:subtitle>Use this form to manage product records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
+      <.form
+        :let={f}
         for={@form}
         id="product-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:code]} type="text" label="Code" />
-        <.input field={@form[:name]} type="text" label="Name" />
-        <.input field={@form[:standard]} type="text" label="Standard" />
-        <.input field={@form[:description]} type="text" label="Description" />
-        <.input field={@form[:price]} type="number" label="Price" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Product</.button>
-        </:actions>
-      </.simple_form>
+        <div class="mb-4 grid gap-4 sm:grid-cols-2">
+          <.input field={f[:code]} type="text" label="가격" />
+          <.input field={f[:name]} type="text" label="이름" />
+          <.input field={f[:price]} type="number" label="가격" />
+          <.inputs_for :let={detail} field={f[:detail]}>
+            <.input field={detail[:standard]} type="text" label="규격" />
+            <.input field={detail[:description]} type="textarea" label="설명" />
+          </.inputs_for>
+        </div>
+        <.button phx-disable-with="Saving...">등록</.button>
+      </.form>
     </div>
     """
   end
 
   @impl true
   def update(%{product: product} = assigns, socket) do
-    changeset = Catalog.change_product(product)
+    changeset = Product.update_changeset(product)
 
     {:ok,
      socket
@@ -46,7 +51,7 @@ defmodule SimonWeb.ProductLive.FormComponent do
   def handle_event("validate", %{"product" => product_params}, socket) do
     changeset =
       socket.assigns.product
-      |> Catalog.change_product(product_params)
+      |> Product.update_changeset(product_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
@@ -57,28 +62,13 @@ defmodule SimonWeb.ProductLive.FormComponent do
   end
 
   defp save_product(socket, :edit, product_params) do
-    case Catalog.update_product(socket.assigns.product, product_params) do
+    case UpdateProductDetail.run(socket.assigns.product, product_params) do
       {:ok, product} ->
         notify_parent({:saved, product})
 
         {:noreply,
          socket
          |> put_flash(:info, "Product updated successfully")
-         |> push_patch(to: socket.assigns.patch)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
-    end
-  end
-
-  defp save_product(socket, :new, product_params) do
-    case Catalog.create_product(product_params) do
-      {:ok, product} ->
-        notify_parent({:saved, product})
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Product created successfully")
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

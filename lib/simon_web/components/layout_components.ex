@@ -8,7 +8,7 @@ defmodule SimonWeb.LayoutComponents do
 
   def app_shell(assigns) do
     ~H"""
-    <.navbar class="fixed top-0 left-0 right-0 z-50"></.navbar>
+    <.navbar current_path={@current_path} class="fixed top-0 left-0 right-0 z-50"></.navbar>
     <main class="h-auto p-4 pt-20">
       <%= render_slot(@inner_block) %>
     </main>
@@ -26,10 +26,10 @@ defmodule SimonWeb.LayoutComponents do
         <div class="flex items-center justify-start">
           <.logo />
         </div>
-        <ul class="flex flex-col p-4 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-          <.navbar_item link={~p"/products"}>상품 관리</.navbar_item>
-          <.navbar_item link={~p"/"}>창고 관리</.navbar_item>
-          <.navbar_item link={~p"/"}>판매 관리</.navbar_item>
+        <ul class="flex flex-col p-4 mt-4 text-lg font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <.navbar_item path={~p"/products"} current_path={@current_path}>상품 관리</.navbar_item>
+          <.navbar_item path={~p"/"} current_path={@current_path}>창고 관리</.navbar_item>
+          <.navbar_item path={~p"/"} current_path={@current_path}>판매 관리</.navbar_item>
         </ul>
         <div class="flex items-center lg:order-2">
           <.notifications />
@@ -40,20 +40,25 @@ defmodule SimonWeb.LayoutComponents do
   end
 
   slot :inner_block, required: true
-  attr :link, :string, required: true
+  attr :path, :string, required: true
+  attr :current_path, :string, required: true
 
   defp navbar_item(assigns) do
     ~H"""
     <li>
-      <.link
-        patch={@link}
-        class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-        aria-current="page"
-      >
+      <.link patch={@path} class={link_css(@path == @current_path)} aria-current="page">
         <%= render_slot(@inner_block) %>
       </.link>
     </li>
     """
+  end
+
+  defp link_css(is_active) do
+    if is_active do
+      "block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 font-bold"
+    else
+      "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+    end
   end
 
   slot :menu, required: false do

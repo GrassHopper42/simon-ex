@@ -82,7 +82,7 @@ defmodule SimonWeb.Router do
     delete "/members/log_out", MemberSessionController, :delete
 
     live_session :current_member,
-      on_mount: [{SimonWeb.MemberAuth, :mount_current_member}] do
+      on_mount: [{SimonWeb.MemberAuth, :mount_current_member}, SimonWeb.RouteAssigns] do
       live "/members/confirm/:token", MemberConfirmationLive, :edit
       live "/members/confirm", MemberConfirmationInstructionsLive, :new
 

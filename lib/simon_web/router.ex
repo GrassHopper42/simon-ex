@@ -93,12 +93,12 @@ defmodule SimonWeb.Router do
       live "/products/:id", ProductLive.Show, :show
       live "/products/:id/show/edit", ProductLive.Show, :edit
 
-      live "/categories", CategoriesLive.Index, :index
-      live "/categories/new", CategoriesLive.Index, :new
-      live "/categories/:id/edit", CategoriesLive.Index, :edit
+      live "/categories", CategoryLive.Index, :index
+      live "/categories/new", CategoryLive.Index, :new
+      live "/categories/:id/edit", CategoryLive.Index, :edit
 
-      live "/categories/:id", CategoriesLive.Show, :show
-      live "/categories/:id/show/edit", CategoriesLive.Show, :edit
+      live "/categories/:id", CategoryLive.Show, :show
+      live "/categories/:id/show/edit", CategoryLive.Show, :edit
     end
   end
 end

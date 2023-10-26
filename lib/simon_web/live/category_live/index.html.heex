@@ -1,8 +1,9 @@
 <.header>
-  Listing Categories
+  카테고리
+  <.link class="text-gray-300 font-regular text-md hover:text-gray-800" patch={~p"/products"}>상품</.link>
   <:actions>
     <.link patch={~p"/categories/new"}>
-      <.button>New Category</.button>
+      <.button>새 카테고리 등록</.button>
     </.link>
   </:actions>
 </.header>
@@ -12,7 +13,7 @@
   rows={@streams.categories}
   row_click={fn {_id, category} -> JS.navigate(~p"/categories/#{category}") end}
 >
-  <:col :let={{_id, category}} label="Name"><%= category.name %></:col>
+  <:col :let={{_id, category}} label="이름"><%= category.name %></:col>
   <:action :let={{_id, category}}>
     <div class="sr-only">
       <.link navigate={~p"/categories/#{category}"}>Show</.link>

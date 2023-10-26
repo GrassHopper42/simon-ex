@@ -17,19 +17,19 @@ defmodule SimonWeb.CategoryLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
-    |> assign(:page_title, "Edit Category")
+    |> assign(:page_title, "카테고리 수정")
     |> assign(:category, FindCategoryById.run(id))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
-    |> assign(:page_title, "New Category")
+    |> assign(:page_title, "새 카테고리")
     |> assign(:category, %Category{})
   end
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Categories")
+    |> assign(:page_title, "카테고리 관리")
     |> assign(:category, nil)
   end
 

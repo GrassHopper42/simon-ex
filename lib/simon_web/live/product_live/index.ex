@@ -17,19 +17,19 @@ defmodule SimonWeb.ProductLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
-    |> assign(:page_title, "Edit Product")
+    |> assign(:page_title, "상품 수정")
     |> assign(:product, FindProductById.run!(id))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
-    |> assign(:page_title, "New Product")
+    |> assign(:page_title, "새 상품")
     |> assign(:product, %Product{})
   end
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Products")
+    |> assign(:page_title, "상품 관리")
     |> assign(:product, nil)
   end
 

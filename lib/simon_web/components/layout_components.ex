@@ -27,9 +27,14 @@ defmodule SimonWeb.LayoutComponents do
           <.logo />
         </div>
         <ul class="flex flex-col p-4 mt-4 text-lg font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-          <.navbar_item path={~p"/products"} current_path={@current_path}>상품 관리</.navbar_item>
-          <.navbar_item path={~p"/"} current_path={@current_path}>창고 관리</.navbar_item>
-          <.navbar_item path={~p"/"} current_path={@current_path}>판매 관리</.navbar_item>
+          <.navbar_item
+            path={~p"/products"}
+            is_active={"/products" == @current_path || "/categories" == @current_path}
+          >
+            상품 관리
+          </.navbar_item>
+          <.navbar_item path={~p"/"} is_active={false}>창고 관리</.navbar_item>
+          <.navbar_item path={~p"/"} is_active={false}>판매 관리</.navbar_item>
         </ul>
         <div class="flex items-center lg:order-2">
           <.notifications />
@@ -41,12 +46,12 @@ defmodule SimonWeb.LayoutComponents do
 
   slot :inner_block, required: true
   attr :path, :string, required: true
-  attr :current_path, :string, required: true
+  attr :is_active, :boolean, required: true
 
   defp navbar_item(assigns) do
     ~H"""
     <li>
-      <.link patch={@path} class={link_css(@path == @current_path)} aria-current="page">
+      <.link patch={@path} class={link_css(@is_active)} aria-current="page">
         <%= render_slot(@inner_block) %>
       </.link>
     </li>

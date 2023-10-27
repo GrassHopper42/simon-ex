@@ -18,8 +18,8 @@ defmodule Simon.Catalog.Product.Repo do
     |> Repo.update()
   end
 
-  def all do
-    Repo.all(Product)
+  def all(query \\ Product) do
+    Repo.all(query)
   end
 
   @doc """

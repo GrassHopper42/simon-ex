@@ -3,9 +3,9 @@ defmodule SimonWeb.MemberLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="max-w-sm mx-auto">
+    <div class="flex flex-col justify-center h-full max-w-sm mx-auto">
       <.header class="text-center">
-        Sign in to account
+        로그인
       </.header>
 
       <.simple_form for={@form} id="login_form" action={~p"/members/log_in"} phx-update="ignore">
@@ -25,6 +25,6 @@ defmodule SimonWeb.MemberLoginLive do
   def mount(_params, _session, socket) do
     phone_number = live_flash(socket.assigns.flash, :phone_number)
     form = to_form(%{"phone_number" => phone_number}, as: "member")
-    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
+    {:ok, assign(socket, form: form), temporary_assigns: [form: form], layout: false}
   end
 end

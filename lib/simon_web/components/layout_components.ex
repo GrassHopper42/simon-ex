@@ -9,7 +9,7 @@ defmodule SimonWeb.LayoutComponents do
   def app_shell(assigns) do
     ~H"""
     <.navbar current_path={@current_path} class="fixed top-0 left-0 right-0 z-50"></.navbar>
-    <main class="h-auto p-4 pt-20">
+    <main class="h-full p-4 pt-20">
       <%= render_slot(@inner_block) %>
     </main>
     """

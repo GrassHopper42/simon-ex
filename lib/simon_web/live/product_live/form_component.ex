@@ -3,6 +3,7 @@ defmodule SimonWeb.ProductLive.FormComponent do
 
   alias Ecto
   alias Simon.Catalog.Product
+  alias Simon.Catalog.Category.Finders.ListAllCategories
   alias Simon.Catalog.Product.Service.UpdateProductDetail
 
   @impl true
@@ -23,6 +24,13 @@ defmodule SimonWeb.ProductLive.FormComponent do
         phx-submit="save"
       >
         <div class="mb-4 grid gap-4 sm:grid-cols-2">
+          <.input
+            field={f[:category_id]}
+            type="select"
+            label="카테고리"
+            prompt="카테고리를 선택하세요"
+            options={ListAllCategories.run() |> Enum.map(&{&1.name, &1.id})}
+          />
           <.input field={f[:code]} type="text" label="가격" />
           <.input field={f[:name]} type="text" label="이름" />
           <.input field={f[:price]} type="number" label="가격" />

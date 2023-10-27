@@ -6,9 +6,8 @@ defmodule Simon.Catalog.Category.Repo do
   alias Simon.Catalog.Category
   alias Simon.Repo
 
-  @spec all() :: [Category.t()]
-  def all() do
-    Repo.all(Category)
+  def all(query \\ Category) do
+    Repo.all(query)
   end
 
   @spec get(integer) :: {:ok, Category.t()} | :error

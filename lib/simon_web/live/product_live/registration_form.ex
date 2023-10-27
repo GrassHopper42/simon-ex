@@ -3,6 +3,7 @@ defmodule SimonWeb.ProductLive.RegistrationForm do
 
   alias Ecto
   alias Simon.Catalog.Product
+  alias Simon.Catalog.Category.Finders.ListAllCategories
   alias Simon.Catalog.Product.Service.RegisterNewProduct
 
   @impl true
@@ -20,6 +21,13 @@ defmodule SimonWeb.ProductLive.RegistrationForm do
         phx-change="validate"
         phx-submit="save"
       >
+        <.input
+          field={@form[:category_id]}
+          type="select"
+          label="카테고리"
+          prompt="카테고리를 선택하세요"
+          options={ListAllCategories.run() |> Enum.map(&{&1.name, &1.id})}
+        />
         <.input field={@form[:code]} type="text" label="코드" />
         <.input field={@form[:name]} type="text" label="이름" />
         <.input field={@form[:price]} type="number" label="가격" />

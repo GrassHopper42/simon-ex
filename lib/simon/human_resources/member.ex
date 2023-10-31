@@ -3,7 +3,11 @@ defmodule Simon.HumanResources.Member do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Simon.HumanResources.Member
+
   schema "members" do
+    field :name, :string
+    field :birthday, :date
     field :phone_number, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
@@ -35,25 +39,39 @@ defmodule Simon.HumanResources.Member do
       submitting the form), this option can be set to `false`.
       Defaults to `true`.
   """
-  def registration_changeset(member, attrs, opts \\ []) do
+  def registration_changeset(%Member{} = member, attrs \\ %{}, opts \\ []) do
     member
-    |> cast(attrs, [:phone_number, :password])
+    |> cast(attrs, [:name, :birthday, :phone_number])
     |> validate_phone_number(opts)
-    |> validate_password(opts)
+    |> set_default_password(opts)
+  end
+
+  defp set_default_password(changeset, opts) do
+    changeset
+    |> put_change(:password, generate_password(changeset))
+    |> maybe_hash_password(opts)
+  end
+
+  defp generate_password(changeset) do
+    changeset
+    |> get_change(:birthday, Date.utc_today())
+    |> Date.to_string()
+    |> String.split("-")
+    |> Enum.join()
   end
 
   defp validate_phone_number(changeset, opts) do
     changeset
     |> validate_required([:phone_number])
-    |> validate_format(:phone_number, ~r/^\d{10}$/)
-    |> validate_length(:phone_number, is: 10)
+    |> validate_format(:phone_number, ~r/^\d{11}$/)
+    |> validate_length(:phone_number, is: 11)
     |> maybe_validate_unique_phone_number(opts)
   end
 
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 12, max: 72)
+    |> validate_length(:password, min: 6, max: 20)
     # Examples of additional password validation:
     # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
@@ -98,7 +116,7 @@ defmodule Simon.HumanResources.Member do
     |> cast(attrs, [:phone_number])
     |> validate_phone_number(opts)
     |> case do
-      %{changes: %{email: _}} = changeset -> changeset
+      %{changes: %{phone_number: _}} = changeset -> changeset
       %{} = changeset -> add_error(changeset, :phone_number, "did not change")
     end
   end

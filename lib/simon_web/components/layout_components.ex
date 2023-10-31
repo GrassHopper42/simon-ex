@@ -5,6 +5,7 @@ defmodule SimonWeb.LayoutComponents do
   use SimonWeb, :html
 
   slot :inner_block, required: true
+  attr :current_path, :string
 
   def app_shell(assigns) do
     ~H"""
@@ -18,6 +19,7 @@ defmodule SimonWeb.LayoutComponents do
   slot :inner_block
 
   attr :class, :string, default: nil
+  attr :current_path, :string, default: nil
 
   defp navbar(assigns) do
     ~H"""
@@ -35,6 +37,9 @@ defmodule SimonWeb.LayoutComponents do
           </.navbar_item>
           <.navbar_item path={~p"/"} is_active={false}>창고 관리</.navbar_item>
           <.navbar_item path={~p"/"} is_active={false}>판매 관리</.navbar_item>
+          <.navbar_item path={~p"/members"} is_active={"/members" == @current_path}>
+            인사 관리
+          </.navbar_item>
         </ul>
         <div class="flex items-center lg:order-2">
           <.notifications />

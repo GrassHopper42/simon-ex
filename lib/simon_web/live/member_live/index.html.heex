@@ -1,0 +1,39 @@
+<.header>
+  인사
+  <:actions>
+    <.link patch={~p"/members/new"}>
+      <.button>직원 등록</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="members"
+  rows={@streams.members}
+  row_click={fn {_id, member} -> JS.navigate(~p"/members/#{member}") end}
+>
+  <:col :let={{_id, member}} label="이름"><%= member.name %></:col>
+  <:col :let={{_id, member}} label="휴대폰번호"><%= member.phone_number %></:col>
+  <:col :let={{_id, member}} label="생년월일"><%= member.birthday %></:col>
+  <:action :let={{_id, member}}>
+    <div class="sr-only">
+      <.link navigate={~p"/members/#{member}"}>Show</.link>
+    </div>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action == :new}
+  id="member-register-modal"
+  show
+  on_cancel={JS.patch(~p"/members")}
+>
+  <.live_component
+    module={SimonWeb.MemberLive.FormComponent}
+    id={@member.id || :new}
+    title={@page_title}
+    action={@live_action}
+    member={@member}
+    patch={~p"/members"}
+  />
+</.modal>

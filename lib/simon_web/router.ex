@@ -99,6 +99,9 @@ defmodule SimonWeb.Router do
 
       live "/categories/:id", CategoryLive.Show, :show
       live "/categories/:id/show/edit", CategoryLive.Show, :edit
+
+      live "/members", MemberLive.Index, :index
+      live "/members/new", MemberLive.Index, :new
     end
   end
 end

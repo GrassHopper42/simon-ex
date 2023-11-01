@@ -58,7 +58,7 @@ defmodule SimonWeb.MemberLive.FormComponent do
   end
 
   defp save_member(socket, :new, member_params) do
-    case RegisterNewMember.run(socket.assigns.member, member_params) do
+    case RegisterNewMember.call(member_params) do
       {:ok, member} ->
         notify_parent({:saved, member})
 

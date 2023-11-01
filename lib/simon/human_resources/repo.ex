@@ -5,8 +5,8 @@ defmodule Simon.HumanResources.Repo do
   alias Simon.HumanResources.Member
 
   def create(attrs) do
-    attrs
-    |> Member.registration_changeset()
+    %Member{}
+    |> Member.registration_changeset(attrs)
     |> Repo.insert()
   end
 

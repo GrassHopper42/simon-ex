@@ -1,7 +1,7 @@
 defmodule Simon.HumanResources.Service.RegisterNewMember do
   import Simon.HumanResources.Repo
 
-  def run(attrs) do
+  def call(attrs) do
     with {:ok, member} <- create(attrs) do
       {:ok, member}
     else

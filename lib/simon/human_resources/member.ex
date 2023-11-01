@@ -42,6 +42,8 @@ defmodule Simon.HumanResources.Member do
   def registration_changeset(%Member{} = member, attrs \\ %{}, opts \\ []) do
     member
     |> cast(attrs, [:name, :birthday, :phone_number])
+    |> validate_name()
+    |> validate_birthday()
     |> validate_phone_number(opts)
     |> set_default_password(opts)
   end
@@ -60,11 +62,49 @@ defmodule Simon.HumanResources.Member do
     |> Enum.join()
   end
 
+  defp validate_name(changeset) do
+    changeset
+    |> validate_required([:name])
+    |> validate_length(:name, min: 2, max: 5)
+    |> validate_format(:name, ~r/[가-힣]+$/)
+  end
+
+  defp validate_birthday(changeset) do
+    changeset
+    |> validate_required([:birthday])
+    |> validate_over_18()
+    |> validate_under_65()
+  end
+
+  defp shift_year(%Date{:year => year} = date, years) do
+    {year + years, date.month, date.day}
+  end
+
+  defp validate_over_18(changeset) do
+    validate_change(changeset, :birthday, fn :birthday, birthday ->
+      if Date.utc_today() |> shift_year(-18) |> Date.before?(birthday) do
+        [birthday: "18세 이상이어야 합니다"]
+      else
+        []
+      end
+    end)
+  end
+
+  defp validate_under_65(changeset) do
+    validate_change(changeset, :birthday, fn :birthday, birthday ->
+      if Date.utc_today() |> shift_year(-65) |> Date.after?(birthday) do
+        [birthday: "65세 이하이어야 합니다"]
+      else
+        []
+      end
+    end)
+  end
+
   defp validate_phone_number(changeset, opts) do
     changeset
     |> validate_required([:phone_number])
-    |> validate_format(:phone_number, ~r/^\d{11}$/)
-    |> validate_length(:phone_number, is: 11)
+    |> validate_format(:phone_number, ~r/^\d{11}$/, message: "11자리 숫자만 입력 가능합니다")
+    |> validate_length(:phone_number, is: 11, message: "11자리 숫자만 입력 가능합니다")
     |> maybe_validate_unique_phone_number(opts)
   end
 
@@ -99,7 +139,7 @@ defmodule Simon.HumanResources.Member do
   defp maybe_validate_unique_phone_number(changeset, opts) do
     if Keyword.get(opts, :validate_phone_number, true) do
       changeset
-      |> unsafe_validate_unique(:phone_number, Simon.Repo)
+      |> unsafe_validate_unique(:phone_number, Simon.Repo, message: "이미 등록된 전화번호입니다")
       |> unique_constraint(:phone_number)
     else
       changeset

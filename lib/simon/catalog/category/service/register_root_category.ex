@@ -4,17 +4,15 @@ defmodule Simon.Catalog.Category.Service.RegisterRootCategory do
   """
 
   alias Simon.Catalog.Category
-  import Simon.Catalog.Category.Repo
 
   @doc """
   Register a new category in the catalog
   """
   @spec call(map) :: {:ok, Category.t()} | {:error, map}
   def call(attrs) do
-    with {:ok, category} <- create(attrs) do
-      {:ok, category}
-    else
-      {:error, changeset} -> {:error, changeset.errors}
+    case Category.Repo.create(attrs) do
+      {:ok, category} -> {:ok, category}
+      {:error, changeset} -> {:error, changeset}
     end
   end
 end

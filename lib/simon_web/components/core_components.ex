@@ -143,8 +143,8 @@ defmodule SimonWeb.CoreComponents do
 
   def flash_group(assigns) do
     ~H"""
-    <.flash kind={:info} title="Success!" flash={@flash} />
-    <.flash kind={:error} title="Error!" flash={@flash} />
+    <.flash kind={:info} title="성공!" flash={@flash} />
+    <.flash kind={:error} title="오류!" flash={@flash} />
     <.flash
       id="client-error"
       kind={:error}
@@ -153,7 +153,7 @@ defmodule SimonWeb.CoreComponents do
       phx-connected={hide("#client-error")}
       hidden
     >
-      Attempting to reconnect <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
+      재연결 시도중 <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
     </.flash>
 
     <.flash

@@ -1,9 +1,9 @@
-defmodule Simon.Catalog.Product.Service.RegisterNewProduct do
+defmodule Simon.Catalog.Bundle.Service.RegisterNewProduct do
   @moduledoc """
   Register a new product in the catalog
   """
 
-  alias Simon.Catalog.Product
+  alias Simon.Catalog.Bundle
   import Simon.Catalog.Product.Repo
 
   @doc """
@@ -12,7 +12,6 @@ defmodule Simon.Catalog.Product.Service.RegisterNewProduct do
   @spec call(map) :: {:ok, Product.t()} | {:error, map}
   def call(attrs) do
     with {:ok, product} <- create(attrs) do
-      Simon.Meilisearch.add_or_replace("products", [product])
       {:ok, product}
     else
       {:error, changeset} -> {:error, changeset.errors}

@@ -57,13 +57,13 @@ defmodule SimonWeb.Router do
 
     live_session :redirect_if_member_is_authenticated,
       on_mount: [{SimonWeb.MemberAuth, :redirect_if_member_is_authenticated}] do
-      live "/", MemberLoginLive, :new
+      live "/login", MemberLoginLive, :new
       live "/members/register", MemberRegistrationLive, :new
       live "/members/reset_password", MemberForgotPasswordLive, :new
       live "/members/reset_password/:token", MemberResetPasswordLive, :edit
     end
 
-    post "/members/log_in", MemberSessionController, :create
+    post "/login", MemberSessionController, :create
   end
 
   scope "/", SimonWeb do
@@ -71,6 +71,7 @@ defmodule SimonWeb.Router do
 
     live_session :require_authenticated_member,
       on_mount: [{SimonWeb.MemberAuth, :ensure_authenticated}] do
+      get "/", PageController, :home
       live "/members/settings", MemberSettingsLive, :edit
       live "/members/settings/confirm_email/:token", MemberSettingsLive, :confirm_email
     end
@@ -79,7 +80,7 @@ defmodule SimonWeb.Router do
   scope "/", SimonWeb do
     pipe_through [:browser]
 
-    delete "/members/log_out", MemberSessionController, :delete
+    delete "/members/logout", MemberSessionController, :delete
 
     live_session :current_member,
       on_mount: [{SimonWeb.MemberAuth, :mount_current_member}, SimonWeb.RouteAssigns] do
@@ -89,6 +90,7 @@ defmodule SimonWeb.Router do
       live "/products", ProductLive.Index, :index
       live "/products/new", ProductLive.Index, :new
       live "/products/:id/edit", ProductLive.Index, :edit
+      live "/products/import", ProductLive.Import
 
       live "/products/:id", ProductLive.Show, :show
       live "/products/:id/show/edit", ProductLive.Show, :edit
@@ -99,6 +101,13 @@ defmodule SimonWeb.Router do
 
       live "/categories/:id", CategoryLive.Show, :show
       live "/categories/:id/show/edit", CategoryLive.Show, :edit
+
+      live "/bundles", BundleLive.Index, :index
+      live "/bundles/new", BundleLive.Index, :new
+      live "/bundles/:id/edit", BundleLive.Index, :edit
+
+      live "/bundles/:id", BundleLive.Show, :show
+      live "/bundles/:id/show/edit", BundleLive.Show, :edit
 
       live "/members", MemberLive.Index, :index
       live "/members/new", MemberLive.Index, :new

@@ -19,9 +19,6 @@ Repo.delete_all(Member)
 if Mix.env() == :dev do
   IO.puts("Seeding development database")
 
-  password = "1234"
-  password_hash = Bcrypt.hash_pwd_salt(password)
-
   HumanResources.register_member(%{
     phone_number: "1234567890",
     password: "simontest1234"

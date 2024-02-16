@@ -1,4 +1,4 @@
-defmodule SimonWeb.CategoryLive.FormComponent do
+defmodule SimonWeb.BundleLive.FormComponent do
   use SimonWeb, :live_component
 
   alias Simon.Catalog.Category
@@ -50,7 +50,6 @@ defmodule SimonWeb.CategoryLive.FormComponent do
     {:noreply, assign_form(socket, changeset)}
   end
 
-  @impl true
   def handle_event("save", %{"category" => category_params}, socket) do
     save_category(socket, socket.assigns.action, category_params)
   end

@@ -8,6 +8,5 @@ defmodule Simon.Catalog.Category.Finders.ListAllCategories do
       category
       |> Map.put(:product_count, CountProductByCategory.run(category.id))
     end)
-    |> IO.inspect()
   end
 end

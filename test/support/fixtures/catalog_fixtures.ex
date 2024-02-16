@@ -5,24 +5,6 @@ defmodule Simon.CatalogFixtures do
   """
 
   @doc """
-  Generate a product.
-  """
-  def product_fixture(attrs \\ %{}) do
-    {:ok, product} =
-      attrs
-      |> Enum.into(%{
-        code: "some code",
-        name: "some name",
-        description: "some description",
-        standard: "some standard",
-        price: 42
-      })
-      |> Simon.Catalog.create_product()
-
-    product
-  end
-
-  @doc """
   Generate a category.
   """
   def category_fixture(attrs \\ %{}) do

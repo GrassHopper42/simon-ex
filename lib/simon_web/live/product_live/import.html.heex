@@ -1,0 +1,55 @@
+<form
+  id="csv-uploader"
+  phx-submit="import"
+  phx-change="validate"
+  class="flex items-center justify-center w-full"
+>
+  <label
+    for={@uploads.csv.ref}
+    class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+  >
+    <div
+      :if={Enum.count(@uploads.csv.entries) == 0}
+      class="flex flex-col items-center justify-center pt-5 pb-6"
+    >
+      <svg
+        class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 20 16"
+      >
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+        />
+      </svg>
+      <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+        <span class="font-semibold">클릭해서 업로드</span>하거나 파일을 위에 드래그앤드롭하세요
+      </p>
+      <p class="text-xs text-gray-500 dark:text-gray-400">CSV 파일만 가능합니다.</p>
+    </div>
+    <%= for entry <- @uploads.csv.entries do %>
+      <article>
+        <figure>
+          <figcaption><%= entry.client_name %></figcaption>
+        </figure>
+        <progress value={entry.progress} max="100">
+          <%= entry.progress %>
+        </progress>
+      </article>
+    <% end %>
+    <.live_file_input upload={@uploads.csv} accept=".csv" hidden />
+  </label>
+  <button
+    :if={Enum.count(@parsed_rows) > 0}
+    phx-click="reset"
+    type="button"
+    class="px-4 py-2 ml-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-500 dark:focus:ring-gray-400"
+  >
+    다시하기
+  </button>
+</form>

@@ -1,4 +1,7 @@
 defmodule SimonWeb.MemberAuth do
+  @moduledoc """
+  This module provides functions to log in and log out members.
+  """
   use SimonWeb, :verified_routes
 
   import Plug.Conn
@@ -156,7 +159,7 @@ defmodule SimonWeb.MemberAuth do
       socket =
         socket
         |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/members/log_in")
+        |> Phoenix.LiveView.redirect(to: ~p"/login")
 
       {:halt, socket}
     end
@@ -206,7 +209,7 @@ defmodule SimonWeb.MemberAuth do
       conn
       |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
-      |> redirect(to: ~p"/members/log_in")
+      |> redirect(to: ~p"/login")
       |> halt()
     end
   end
@@ -223,5 +226,5 @@ defmodule SimonWeb.MemberAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn), do: ~p"/products"
+  defp signed_in_path(_conn), do: ~p"/"
 end

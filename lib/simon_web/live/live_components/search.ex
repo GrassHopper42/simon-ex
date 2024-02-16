@@ -1,4 +1,8 @@
 defmodule SimonWeb.LiveComponents.Search do
+  @moduledoc """
+  Search component
+  """
+
   use SimonWeb, :live_component
 
   @impl true
@@ -33,7 +37,7 @@ defmodule SimonWeb.LiveComponents.Search do
   end
 
   @impl true
-  def update(assigns, socket) do
+  def update(_assigns, socket) do
     {:ok, socket}
   end
 end

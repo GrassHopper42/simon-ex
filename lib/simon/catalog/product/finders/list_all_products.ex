@@ -1,4 +1,6 @@
 defmodule Simon.Catalog.Product.Finders.ListAllProducts do
+  @moduledoc false
+
   alias Simon.Repo
 
   def run do

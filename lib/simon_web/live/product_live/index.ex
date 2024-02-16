@@ -1,13 +1,15 @@
 defmodule SimonWeb.ProductLive.Index do
   use SimonWeb, :live_view
 
-  alias Simon.Catalog.Product.Finders.{ListAllProducts, FindProductById}
+  alias Simon.Catalog.Product.Finders.{ListAllProducts, FindProductById, Search}
   alias Simon.Catalog.Product.Service.DeleteProduct
   alias Simon.Catalog.Product
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :products, ListAllProducts.run())}
+    products = Search.run("") || []
+
+    {:ok, stream(socket, :products, products)}
   end
 
   @impl true

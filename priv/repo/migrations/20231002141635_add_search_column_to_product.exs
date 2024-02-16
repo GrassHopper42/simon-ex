@@ -3,12 +3,12 @@ defmodule Simon.Repo.Migrations.AddSearchColumnToProduct do
 
   def change do
     execute """
-      ALTER TABLE products
-      ADD COLUMN search tsvector;
-      """
+    ALTER TABLE products
+    ADD COLUMN search tsvector;
+    """
 
-      execute """
-      CREATE INDEX products_search_idx ON products USING gin(search)
-      """
+    execute """
+    CREATE INDEX products_search_idx ON products USING gin(search)
+    """
   end
 end

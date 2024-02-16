@@ -1,16 +1,21 @@
 <.header>
-  <.link class="text-gray-300 font-regular text-md hover:text-gray-800" patch={~p"/categories"}>카테고리</.link>
+  <.link class="text-gray-300 font-regular text-md hover:text-gray-800" patch={~p"/categories"}>
+    카테고리
+  </.link>
   상품
   <:actions>
     <.link patch={~p"/products/new"}>
       <.button>새 상품 등록</.button>
+    </.link>
+    <.link patch={~p"/products/import"}>
+      <.button>불러오기</.button>
     </.link>
   </:actions>
 </.header>
 
 <.table
   id="products"
-  rows={@streams.products}
+  rows={@streams.products || []}
   row_click={fn {_id, product} -> JS.navigate(~p"/products/#{product}") end}
 >
   <:col :let={{_id, product}} label="코드"><%= product.code %></:col>
@@ -51,6 +56,18 @@
     title={@page_title}
     action={@live_action}
     product={@product}
+    patch={~p"/products"}
+  />
+</.modal>
+<.modal
+  :if={@live_action == :import}
+  id="product-import-modal"
+  show
+  on_cancel={JS.patch(~p"/products")}
+>
+  <.live_component
+    module={SimonWeb.ProductLive.ImportForm}
+    action={@live_action}
     patch={~p"/products"}
   />
 </.modal>

@@ -1,4 +1,6 @@
 defmodule Simon.Catalog.Product.Value.ProductDetail do
+  @moduledoc false
+
   alias Simon.Catalog.Product.Value.ProductDetail
   use Ecto.Schema
   import Ecto.Changeset

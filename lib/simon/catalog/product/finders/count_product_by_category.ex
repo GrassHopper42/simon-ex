@@ -1,4 +1,6 @@
 defmodule Simon.Catalog.Product.Finders.CountProductByCategory do
+  @moduledoc false
+
   import Ecto.Query
 
   alias Simon.Repo

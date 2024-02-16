@@ -11,11 +11,11 @@ defmodule SimonWeb.MemberSessionController do
   def create(conn, %{"_action" => "password_updated"} = params) do
     conn
     |> put_session(:member_return_to, ~p"/members/settings")
-    |> create(params, "Password updated successfully!")
+    |> create(params, "비밀번호가 변경되었습니다.")
   end
 
   def create(conn, params) do
-    create(conn, params, "Welcome back!")
+    create(conn, params, "로그인 되었습니다.")
   end
 
   defp create(conn, %{"member" => member_params}, info) do
@@ -28,15 +28,15 @@ defmodule SimonWeb.MemberSessionController do
     else
       # In order to prevent user enumeration attacks, don't disclose whether the phone_number is registered.
       conn
-      |> put_flash(:error, "Invalid phone_number or password")
+      |> put_flash(:error, "전화번호나 비밀번호를 다시 확인해주세요.")
       |> put_flash(:phone_number, String.slice(phone_number, 0, 160))
-      |> redirect(to: ~p"/members/log_in")
+      |> redirect(to: ~p"/login")
     end
   end
 
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
+    |> put_flash(:info, "로그아웃 되었습니다.")
     |> MemberAuth.log_out_member()
   end
 end

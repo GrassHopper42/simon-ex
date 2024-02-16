@@ -8,7 +8,7 @@ defmodule SimonWeb.MemberLoginLive do
         로그인
       </.header>
 
-      <.simple_form for={@form} id="login_form" action={~p"/members/log_in"} phx-update="ignore">
+      <.simple_form for={@form} id="login_form" action={~p"/login"} phx-update="ignore">
         <.input field={@form[:phone_number]} type="tel" label="전화번호" required />
         <.input field={@form[:password]} type="password" label="비밀번호" required />
 
@@ -19,6 +19,7 @@ defmodule SimonWeb.MemberLoginLive do
         </:actions>
       </.simple_form>
     </div>
+    <.flash_group flash={@flash} />
     """
   end
 

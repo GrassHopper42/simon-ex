@@ -25,16 +25,15 @@ defmodule Simon.Catalog.Product.Repo do
   @doc """
   Find Product by id
   """
-  @spec get(Integer) :: {:ok, Product.t()} | {:error, map}
+  @spec get(integer()) :: {:ok, Product.t()} | {:error, atom()}
   def get(id) do
-    product = Repo.get(Product, id)
-
-    case product do
-      nil -> {:error, %{id: ["Product not found"]}}
-      _ -> {:ok, product}
+    case Repo.get(Product, id) do
+      nil -> {:error, :not_found}
+      product -> {:ok, product}
     end
   end
 
+  @spec get!(integer()) :: Product.t()
   def get!(id) do
     Repo.get!(Product, id)
   end
@@ -44,13 +43,13 @@ defmodule Simon.Catalog.Product.Repo do
   """
   @spec get_by_code(String.t()) :: {:ok, Product.t()} | {:error, map}
   def get_by_code(code) do
-    with {:ok, product} <- Repo.get_by(Product, code: code) do
-      {:ok, product}
-    else
+    case Repo.get_by(Product, code: code) do
+      {:ok, product} -> {:ok, product}
       {:error, changeset} -> {:error, changeset.errors}
     end
   end
 
+  @spec delete(Product.t()) :: {:ok, Product.t()} | {:error, any()}
   def delete(product) do
     Repo.delete(product)
   end

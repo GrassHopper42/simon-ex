@@ -5,7 +5,7 @@ defmodule Simon.MixProject do
     [
       app: :simon,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.16",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -52,7 +52,9 @@ defmodule Simon.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:phoenix_storybook, "~> 0.5.6"}
+      {:phoenix_storybook, "~> 0.5.6"},
+      {:httpoison, "~> 2.2.1"},
+      {:nimble_csv, "~> 1.2"}
     ]
   end
 

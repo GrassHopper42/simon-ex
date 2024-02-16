@@ -1,4 +1,6 @@
 defmodule Simon.Catalog.Product do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -22,11 +24,10 @@ defmodule Simon.Catalog.Product do
     product
     |> cast(attrs, [:category_id, :code, :name, :price])
     |> validate_required([:category_id, :code, :name, :price], message: "필수 입력 사항입니다.")
-    |> unique_constraint(:code, message: "이미 등록된 코드입니다.")
-    |> validate_length(:code, min: 8, message: "코드는 8자 이상이어야 합니다.")
-    |> validate_length(:name, min: 1, message: "이름은 1자 이상이어야 합니다.")
+    |> validate_code()
+    |> validate_name()
     |> validate_number(:price, greater_than_or_equal_to: 0, message: "가격은 0 이상이어야 합니다.")
-    |> cast_assoc(:category, required: true, message: "카테고리를 선택하세요.")
+    |> cast_category()
     |> put_embed(:detail, %ProductDetail{})
   end
 
@@ -35,11 +36,10 @@ defmodule Simon.Catalog.Product do
     product
     |> cast(attrs, [:category_id, :code, :name, :price])
     |> validate_required([:category_id, :code, :name, :price])
-    |> unique_constraint(:code)
-    |> validate_length(:code, min: 8)
-    |> validate_length(:name, min: 1)
-    |> validate_number(:price, greater_than_or_equal_to: 0)
-    |> cast_assoc(:category, required: true)
+    |> validate_code()
+    |> validate_name()
+    |> validate_number(:price, greater_than_or_equal_to: 0, message: "가격은 0 이상이어야 합니다.")
+    |> cast_category()
     |> cast_embed(:detail)
   end
 
@@ -52,5 +52,21 @@ defmodule Simon.Catalog.Product do
 
   def registration_change(product, attrs) do
     Product.registration_changeset(product, attrs)
+  end
+
+  defp validate_code(changeset) do
+    changeset
+    |> unique_constraint(:code, message: "이미 등록된 코드입니다.")
+    |> validate_length(:code, min: 8, message: "코드는 8자 이상이어야 합니다.")
+  end
+
+  defp validate_name(changeset) do
+    changeset
+    |> validate_length(:name, min: 1, message: "이름은 1자 이상이어야 합니다.")
+  end
+
+  defp cast_category(changeset) do
+    changeset
+    |> cast_assoc(:category, required: true, message: "카테고리를 선택하세요.")
   end
 end

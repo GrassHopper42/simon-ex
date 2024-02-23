@@ -22,7 +22,7 @@ defmodule SimonWeb.MemberLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "상품 관리")
+    |> assign(:page_title, "직원 관리")
     |> assign(:member, nil)
   end
 

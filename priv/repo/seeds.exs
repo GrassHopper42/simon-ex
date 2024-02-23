@@ -19,8 +19,8 @@ Repo.delete_all(Member)
 if Mix.env() == :dev do
   IO.puts("Seeding development database")
 
-  HumanResources.register_member(%{
+  Repo.insert(%Member{
     phone_number: "1234567890",
-    password: "simontest1234"
+    hashed_password: Bcrypt.hash_pwd_salt("simontest1234")
   })
 end

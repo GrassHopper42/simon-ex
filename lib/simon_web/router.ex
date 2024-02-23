@@ -111,6 +111,13 @@ defmodule SimonWeb.Router do
 
       live "/members", MemberLive.Index, :index
       live "/members/new", MemberLive.Index, :new
+
+      live "/parties", PartyLive.Index, :index
+      live "/parties/new", PartyLive.Index, :new
+      live "/parties/:id/edit", PartyLive.Index, :edit
+
+      live "/parties/:id", PartyLive.Show, :show
+      live "/parties/:id/show/edit", PartyLive.Show, :show
     end
   end
 end

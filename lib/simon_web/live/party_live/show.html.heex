@@ -1,0 +1,42 @@
+<.header>
+  거래처 정보
+  <:subtitle>거리처 상세 정보</:subtitle>
+  <:actions>
+    <.link patch={~p"/parties/#{@party}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>수정</.button>
+    </.link>
+    <.link
+      phx-click={JS.push("delete", value: %{id: @party.id}) |> hide("##{@party.id}")}
+      data-confirm="정말 삭제하시겠습니까?"
+    >
+      <.button class="bg-red">
+        삭제
+      </.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title={if @party.type == "organization", do: "상호", else: "이름"}><%= @party.name %></:item>
+  <:item :if={@party.type == "organization"} title="사업자등록번호"><%= @party.tax_id %></:item>
+  <:item title="주소"><%= @party.address %></:item>
+  <:item title="메모"><%= @party.memo %></:item>
+</.list>
+
+<.back navigate={~p"/parties"}>Back to parties</.back>
+
+<.modal
+  :if={@live_action == :edit}
+  id="party-modal"
+  show
+  on_cancel={JS.patch(~p"/parties/#{@party}")}
+>
+  <.live_component
+    module={SimonWeb.PartyLive.FormComponent}
+    id={@party.id}
+    title={@page_title}
+    action={@live_action}
+    party={@party}
+    patch={~p"/parties/#{@party}"}
+  />
+</.modal>

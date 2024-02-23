@@ -1,0 +1,37 @@
+<.header>
+  거래처
+  <:actions>
+    <.link patch={~p"/parties/new"}>
+      <.button>거래처 등록</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="parties"
+  rows={@streams.parties}
+  row_click={fn {_id, party} -> JS.navigate(~p"/parties/#{party}") end}
+>
+  <:col :let={{_id, party}} label="상호"><%= party.name %></:col>
+  <:action :let={{_id, party}}>
+    <div class="sr-only">
+      <.link navigate={~p"/parties/#{party}"}>Show</.link>
+    </div>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action == :new}
+  id="party-register-modal"
+  show
+  on_cancel={JS.patch(~p"/parties")}
+>
+  <.live_component
+    module={SimonWeb.PartyLive.FormComponent}
+    id={@party.id || :new}
+    title={@page_title}
+    action={@live_action}
+    party={@party}
+    patch={~p"/parties"}
+  />
+</.modal>

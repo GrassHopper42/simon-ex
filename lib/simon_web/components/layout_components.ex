@@ -40,6 +40,9 @@ defmodule SimonWeb.LayoutComponents do
           <.navbar_item path={~p"/members"} is_active={"/members" == @current_path}>
             인사 관리
           </.navbar_item>
+          <.navbar_item path={~p"/accounts"} is_active={"/accounts" == @current_path}>
+            거래처 관리
+          </.navbar_item>
         </ul>
         <div class="flex items-center lg:order-2">
           <.notifications />

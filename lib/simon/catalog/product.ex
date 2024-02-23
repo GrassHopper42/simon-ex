@@ -22,32 +22,25 @@ defmodule Simon.Catalog.Product do
 
   def registration_changeset(%Product{} = product, attrs \\ %{}) do
     product
-    |> cast(attrs, [:category_id, :code, :name, :price])
-    |> validate_required([:category_id, :code, :name, :price], message: "필수 입력 사항입니다.")
-    |> validate_code()
-    |> validate_name()
-    |> validate_number(:price, greater_than_or_equal_to: 0, message: "가격은 0 이상이어야 합니다.")
-    |> cast_category()
+    |> changeset(attrs)
     |> put_embed(:detail, %ProductDetail{})
   end
 
   @doc false
   def update_changeset(%Product{} = product, attrs \\ %{}) do
     product
+    |> changeset(attrs)
+    |> cast_embed(:detail)
+  end
+
+  defp changeset(%Product{} = product, attrs \\ %{}) do
+    product
     |> cast(attrs, [:category_id, :code, :name, :price])
-    |> validate_required([:category_id, :code, :name, :price])
+    |> validate_required([:category_id, :code, :name, :price], message: "필수 입력 사항입니다.")
     |> validate_code()
     |> validate_name()
     |> validate_number(:price, greater_than_or_equal_to: 0, message: "가격은 0 이상이어야 합니다.")
     |> cast_category()
-    |> cast_embed(:detail)
-  end
-
-  def changeset(%Product{} = product, attrs \\ %{}) do
-    product
-    |> cast(attrs, [:category_id, :code, :name, :price])
-    |> unique_constraint(:code)
-    |> cast_embed(:detail)
   end
 
   def registration_change(product, attrs) do

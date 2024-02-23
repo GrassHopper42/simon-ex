@@ -358,6 +358,26 @@ defmodule SimonWeb.CoreComponents do
     """
   end
 
+  def input(%{type: "radio"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name} class="flex items-center gap-2">
+      <input
+        type="radio"
+        id={@id}
+        name={@name}
+        value={@value}
+        checked={@checked}
+        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        {@rest}
+      />
+      <label for={@id} class="text-lg font-medium text-gray-900 ms-2 dark:text-gray-300">
+        <%= @label %>
+      </label>
+      <.error :for={msg <- @errors}><%= msg %></.error>
+    </div>
+    """
+  end
+
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
@@ -378,6 +398,47 @@ defmodule SimonWeb.CoreComponents do
       />
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
+    """
+  end
+
+  @doc """
+  Renders a fieldset with multiple radio buttons representing `Ecto.Enum` fields.
+  note: string interpolation of `@field.value` is because it can switch from an atom to string
+        depending on whether it came from the database or form
+  """
+  attr :field, Phoenix.HTML.FormField,
+    doc: "a form field struct retrieved from the form, for example: @form[:email]"
+
+  attr :label, :string, default: nil
+  attr :options, :list, doc: "the options for the radio buttons in the fieldset"
+  attr :checked_value, :string, doc: "the currently checked value"
+
+  attr :errors, :list, default: []
+
+  def radio_fieldset(%{field: %Phoenix.HTML.FormField{}} = assigns) do
+    ~H"""
+    <fieldset
+      phx-feedback-for={@field.name}
+      class={[
+        "flex flex-row items-center justify-center gap-4",
+        "block w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm",
+        @errors == [] && "border-zinc-300 focus:border-zinc-400",
+        @errors != [] && "border-rose-400 focus:border-rose-400"
+      ]}
+      required
+    >
+      <legend class="ml-2 text-sm font-semibold text-zinc-800"><%= @label %></legend>
+      <.input
+        :for={option <- @options}
+        field={@field}
+        id={"#{@field.id}_#{option.value}"}
+        type="radio"
+        label={option.label}
+        value={option.value}
+        checked={@checked_value == option.value || @field.value == String.to_atom(option.value)}
+      />
+      <.error :for={msg <- @errors}><%= msg %></.error>
+    </fieldset>
     """
   end
 

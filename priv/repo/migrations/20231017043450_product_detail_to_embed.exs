@@ -1,4 +1,6 @@
 defmodule Simon.Repo.Migrations.ProductDetailToEmbed do
+  @moduledoc false
+
   use Ecto.Migration
 
   def change do

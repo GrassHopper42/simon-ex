@@ -8,6 +8,7 @@ defmodule Simon.Catalog.Product do
   alias Simon.Catalog.Product
   alias Simon.Catalog.Product.Value.ProductDetail
 
+  @derive {Jason.Encoder, except: [:__meta__, :category]}
   schema "products" do
     field :code, :string
     field :name, :string
@@ -33,14 +34,13 @@ defmodule Simon.Catalog.Product do
     |> cast_embed(:detail)
   end
 
-  defp changeset(%Product{} = product, attrs \\ %{}) do
+  defp changeset(%Product{} = product, attrs) do
     product
     |> cast(attrs, [:category_id, :code, :name, :price])
     |> validate_required([:category_id, :code, :name, :price], message: "필수 입력 사항입니다.")
     |> validate_code()
     |> validate_name()
     |> validate_number(:price, greater_than_or_equal_to: 0, message: "가격은 0 이상이어야 합니다.")
-    |> cast_category()
   end
 
   def registration_change(product, attrs) do
@@ -50,7 +50,7 @@ defmodule Simon.Catalog.Product do
   defp validate_code(changeset) do
     changeset
     |> unique_constraint(:code, message: "이미 등록된 코드입니다.")
-    |> validate_length(:code, min: 8, message: "코드는 8자 이상이어야 합니다.")
+    |> validate_length(:code, min: 8, message: "j코드는 8자 이상이어야 합니다.")
   end
 
   defp validate_name(changeset) do

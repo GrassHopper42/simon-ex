@@ -52,14 +52,14 @@ defmodule Simon.Relationship.Repo do
   end
 
   def search_contacts(query) do
-    query =
+    q =
       from c in Contact,
         where:
           like(c.name, ^"%#{query}%") or like(c.phone, ^"%#{query}%") or
             like(c.email, ^"%#{query}%"),
         select: c
 
-    Repo.all(query)
+    Repo.all(q)
   end
 
   def update_contact(%Contact{} = contact, attrs) do
@@ -75,5 +75,14 @@ defmodule Simon.Relationship.Repo do
   def find_party_by_contact(%Contact{} = contact) do
     contact
     |> Repo.preload(:parties)
+  end
+
+  def find_party_by_name(query) do
+    q =
+      from p in Party,
+        where: like(p.name, ^"%#{query}%"),
+        select: p
+
+    Repo.all(q)
   end
 end

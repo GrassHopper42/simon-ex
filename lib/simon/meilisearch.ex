@@ -14,6 +14,7 @@ defmodule Simon.Meilisearch do
     hits = body["hits"]
     processing_time = body["processingTimeMs"]
 
+    :logger.info("Meilisearch search #{length(hits)} results")
     :logger.info("Meilisearch search took #{processing_time}ms")
 
     hits
@@ -50,11 +51,11 @@ defmodule Simon.Meilisearch do
   end
 
   defp post!(url, body) do
-    HTTPoison.post!(url, Jason.encode!(body), headers())
+    HTTPoison.post!(url, encode!(body), headers())
   end
 
   defp put!(url, body) do
-    HTTPoison.put!(url, Jason.encode!(body), headers())
+    HTTPoison.put!(url, encode!(body), headers())
   end
 
   defp document_url(index) do
@@ -73,5 +74,10 @@ defmodule Simon.Meilisearch do
 
   defp headers do
     [{"Content-Type", "application/json"}]
+  end
+
+  defp encode!(struct) do
+    struct
+    |> Jason.encode!()
   end
 end

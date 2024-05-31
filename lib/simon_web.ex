@@ -55,6 +55,7 @@ defmodule SimonWeb do
         layout: {SimonWeb.Layouts, :app}
 
       unquote(html_helpers())
+      unquote(components())
     end
   end
 
@@ -63,6 +64,7 @@ defmodule SimonWeb do
       use Phoenix.LiveComponent
 
       unquote(html_helpers())
+      unquote(components())
     end
   end
 
@@ -92,6 +94,12 @@ defmodule SimonWeb do
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
+    end
+  end
+
+  defp components do
+    quote do
+      import SimonWeb.Core.Hr
     end
   end
 

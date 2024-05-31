@@ -18,7 +18,9 @@
 
 <.list>
   <:item title={if @party.type == "organization", do: "상호", else: "이름"}><%= @party.name %></:item>
-  <:item :if={@party.type == "organization"} title="사업자등록번호"><%= @party.tax_id %></:item>
+  <:item :if={@party.type == "organization"} title="사업자등록번호">
+    <%= @party.tax_id %>
+  </:item>
   <:item title="주소"><%= @party.address %></:item>
   <:item title="메모"><%= @party.memo %></:item>
 </.list>

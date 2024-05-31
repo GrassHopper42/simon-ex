@@ -19,6 +19,6 @@ defmodule SimonWeb.ProductLive.Show do
     end
   end
 
-  defp page_title(:show), do: "Show Product"
-  defp page_title(:edit), do: "Edit Product"
+  defp page_title(:show), do: "상품 조회"
+  defp page_title(:edit), do: "상품 수정"
 end

@@ -1,0 +1,46 @@
+<div class="antialiased bg-gray-50 dark:bg-gray-900">
+  <!-- Sidebar -->
+  <.live_component
+    module={SimonWeb.SaleLive.Components.OrdererComponent}
+    id={:sale_orderer_tab}
+    title={@page_title}
+    orderer={@orderer}
+    action={@live_action}
+  />
+
+  <main class="p-4 md:ml-64 h-auto pt-6">
+    <div :if={@live_action == :index || @live_action == :show_orderer}>
+      <.header>
+        주문 내역
+        <:actions>
+          <.link :if={@live_action == :show_orderer} patch={~p"/sale/#{@orderer}/new"}>
+            <.button>새 상품 등록</.button>
+          </.link>
+        </:actions>
+      </.header>
+
+      <.table
+        id="products"
+        rows={@streams.orders || []}
+        row_click={fn {_id, order} -> JS.navigate(~p"/products/#{order}") end}
+      >
+        <:col :let={{_id, order}} label="코드"><%= order.code %></:col>
+        <:col :let={{_id, order}} label="이름"><%= order.name %></:col>
+        <:col :let={{_id, order}} label="가격"><%= order.price %></:col>
+        <:col :let={{_id, order}} label="카테고리"><%= order.category.name %></:col>
+        <:action :let={{_id, product}}>
+          <div class="sr-only">
+            <.link navigate={~p"/products/#{product}"}>Show</.link>
+          </div>
+        </:action>
+      </.table>
+    </div>
+    <div :if={@live_action == :new}>
+      <.header>
+        새 견적
+      </.header>
+      <.live_component module={SimonWeb.SaleLive.Components.ProductSearchComponent} id={:product_search_panel} />
+      <.hr_default />
+    </div>
+  </main>
+</div>

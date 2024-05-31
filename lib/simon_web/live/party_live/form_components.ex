@@ -78,10 +78,10 @@ defmodule SimonWeb.PartyLive.FormComponent do
   end
 
   def handle_event("save", %{"party" => party_params}, socket) do
-    save_member(socket, socket.assigns.action, party_params)
+    save_party(socket, socket.assigns.action, party_params)
   end
 
-  defp save_member(socket, :new, party_params) do
+  defp save_party(socket, :new, party_params) do
     case RegisterNewParty.call(party_params) do
       {:ok, party} ->
         notify_parent({:saved, party})
